@@ -1,0 +1,1152 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مسابقة العلوم - الوحدة الأولى (الكائنات المجهرية والشهادات)</title>
+    <style>
+        :root {
+            --primary: #9b59b6;
+            --accent: #f1c40f;
+            --bg-dark: #0f172a;
+            --card-bg: #1e293b;
+            --text-light: #f8fafc;
+            --danger: #ef4444;
+            --info: #38bdf8;
+            --success: #2ecc71;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+        }
+
+        .game-container {
+            width: 100%;
+            max-width: 950px;
+            background: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+            overflow: hidden;
+            position: relative;
+            border: 1px solid #334155;
+        }
+
+        .screen {
+            display: none;
+            padding: 30px 20px;
+            text-align: center;
+        }
+
+        .screen.active { display: block; }
+
+        h1 { color: var(--accent); font-size: 2.2rem; margin-bottom: 10px; }
+        h2 { color: #a855f7; margin-bottom: 20px; }
+        p { font-size: 1.05rem; margin-bottom: 20px; color: #94a3b8; }
+
+        .official-header {
+            background: #0f172a;
+            border: 2px solid #475569;
+            border-radius: 15px;
+            padding: 20px 25px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .official-header .side-info {
+            font-size: 17px;
+            line-height: 1.8;
+            font-weight: bold;
+            color: #f8fafc;
+            text-align: right;
+        }
+
+        .official-header .side-info-left {
+            font-size: 17px;
+            line-height: 1.8;
+            font-weight: bold;
+            color: #f8fafc;
+            text-align: left;
+        }
+
+        .official-header .class-title {
+            color: var(--accent);
+            font-size: 19px;
+            font-weight: 800;
+        }
+
+        .teacher-name { color: #38bdf8; font-weight: bold; }
+        .empty-center { flex-grow: 1; }
+
+        .form-group {
+            margin-bottom: 15px;
+            text-align: right;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: var(--accent);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 2px solid #475569;
+            background: #0f172a;
+            color: #fff;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .form-control:focus { border-color: var(--primary); }
+
+        .role-cards {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .role-card {
+            background: #334155;
+            border: 3px solid #475569;
+            border-radius: 15px;
+            padding: 25px;
+            width: 220px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .role-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            background: #475569;
+        }
+
+        .color-selector {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .color-btn {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .color-btn.selected {
+            border-color: #fff;
+            transform: scale(1.2);
+        }
+
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1rem;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+            box-shadow: 0 4px 15px rgba(155, 89, 182, 0.4);
+            margin: 5px;
+        }
+
+        .btn:hover { transform: translateY(-2px); }
+        .btn-success { background: var(--success); box-shadow: 0 4px 15px rgba(46, 204, 113, 0.4); }
+        .btn-danger { background: var(--danger); box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4); }
+        .btn-secondary { background: #64748b; box-shadow: none; }
+        .btn-info { background: var(--info); }
+
+        .stages-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stage-card {
+            background: #334155;
+            border: 2px solid #475569;
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .stage-card:hover {
+            border-color: var(--accent);
+            background: #475569;
+            transform: scale(1.02);
+        }
+
+        .track-container {
+            position: relative;
+            width: 100%;
+            height: 180px;
+            background: #020617;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 15px;
+            border: 2px solid #38bdf8;
+        }
+
+        canvas { width: 100%; height: 100%; }
+
+        .quiz-box {
+            background: rgba(0,0,0,0.3);
+            padding: 20px;
+            border-radius: 15px;
+            border: 1px solid #334155;
+        }
+
+        .stage-title { color: var(--accent); font-weight: bold; font-size: 1.1rem; margin-bottom: 10px; }
+        .question-text { font-size: 1.15rem; font-weight: bold; margin-bottom: 20px; min-height: 50px; display: flex; align-items: center; justify-content: center; }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .option-btn {
+            background: #334155;
+            color: white;
+            border: 2px solid #475569;
+            padding: 12px;
+            font-size: 0.95rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .option-btn:hover { background: #475569; border-color: var(--info); }
+
+        .hud {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 15px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 10px;
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+            font-weight: bold;
+        }
+
+        .table-responsive {
+            max-height: 380px;
+            overflow-y: auto;
+            margin: 20px 0;
+            border-radius: 10px;
+            border: 1px solid #475569;
+        }
+
+        table { width: 100%; border-collapse: collapse; background: #1e293b; font-size: 0.85rem; }
+        th, td { padding: 10px 8px; text-align: center; border-bottom: 1px solid #334155; }
+        th { background: #a855f7; color: white; position: sticky; top: 0; }
+        tr:nth-child(even) { background: #0f172a; }
+
+        /* النافذة المنبثقة للشهادة */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+        }
+
+        .modal-overlay.active { display: flex; }
+
+        .certificate-container {
+            background: #ffffff;
+            color: #1e293b;
+            width: 100%;
+            max-width: 800px;
+            border-radius: 15px;
+            padding: 35px;
+            border: 8px double #f1c40f;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            position: relative;
+            text-align: center;
+        }
+
+        .cert-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #cbd5e1;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .cert-header .right-head {
+            text-align: right;
+            font-size: 14px;
+            line-height: 1.6;
+            font-weight: bold;
+            color: #0f172a;
+        }
+
+        .cert-header .left-head {
+            text-align: left;
+            font-size: 14px;
+            line-height: 1.6;
+            font-weight: bold;
+            color: #0f172a;
+        }
+
+        .cert-title {
+            font-size: 2.2rem;
+            color: #8b5cf6;
+            font-weight: 900;
+            margin: 15px 0 10px 0;
+        }
+
+        .cert-subtitle {
+            font-size: 1.2rem;
+            color: #0284c7;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .cert-body {
+            font-size: 1.15rem;
+            line-height: 2;
+            color: #334155;
+            margin: 25px 0;
+        }
+
+        .cert-student-name {
+            font-size: 1.8rem;
+            color: #d97706;
+            font-weight: bold;
+            text-decoration: underline;
+            display: inline-block;
+            margin: 5px 0;
+        }
+
+        .cert-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-top: 35px;
+            padding-top: 20px;
+            border-top: 2px dashed #cbd5e1;
+        }
+
+        .cert-sig {
+            text-align: center;
+            font-size: 15px;
+            font-weight: bold;
+            color: #0f172a;
+        }
+
+        .cert-actions {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        /* تنسيقات الطباعة */
+        @media print {
+            body * { visibility: hidden; }
+            .modal-overlay, .certificate-container, .certificate-container * { visibility: visible; }
+            .modal-overlay {
+                position: absolute; left: 0; top: 0;
+                width: 100%; height: 100%;
+                background: #ffffff; padding: 0;
+            }
+            .certificate-container {
+                border: 6px double #d97706;
+                box-shadow: none; max-width: 100%; margin: 0;
+            }
+            .cert-actions { display: none !important; }
+        }
+
+        @media (max-width: 600px) {
+            .options-grid { grid-template-columns: 1fr; }
+            .role-cards { flex-direction: column; align-items: center; }
+            .official-header { flex-direction: column; text-align: center; gap: 15px; }
+            .official-header .side-info, .official-header .side-info-left { text-align: center; }
+            .cert-header { flex-direction: column; gap: 10px; text-align: center; }
+            .cert-header .right-head, .cert-header .left-head { text-align: center; }
+            .cert-footer { flex-direction: column; align-items: center; gap: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="game-container">
+
+    <!-- 1. الشاشة الرئيسية -->
+    <div id="role-screen" class="screen active">
+        <div class="official-header">
+            <div class="side-info">
+                <div>دولة فلسطين</div>
+                <div>وزارة التربية والتعليم العالي</div>
+                <div>مديرية التربية والتعليم / طوباس</div>
+                <div>مدرسة ذكور طمون الأساسية العليا</div>
+            </div>
+            
+            <div class="empty-center"></div>
+
+            <div class="side-info-left">
+                <div class="class-title">الصف: السادس الأساسي</div>
+                <div>المادة: العلوم والحياة</div>
+                <div class="teacher-name">معلم المادة: أ. أمين عبدالرازق</div>
+            </div>
+        </div>
+
+        <h1>مسابقة العلوم الإلكترونية 🧫🚀</h1>
+        <p>رحلة في عالم الكائنات المجهرية والمناعة</p>
+
+        <div class="role-cards">
+            <div class="role-card" onclick="goToStudentLogin()">
+                <div style="font-size: 3rem;">👨‍🎓</div>
+                <h3>دخول الطالب</h3>
+            </div>
+            <div class="role-card" onclick="goToTeacherLogin()">
+                <div style="font-size: 3rem;">👨‍🏫</div>
+                <h3>دخول المعلم</h3>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. دخول الطالب -->
+    <div id="student-login-screen" class="screen">
+        <h2>تسجيل بيانات الطالب 📝</h2>
+        <div class="form-group">
+            <label>الاسم الثلاثي:</label>
+            <input type="text" id="student-name" class="form-control" placeholder="أدخل اسمك الثلاثي">
+        </div>
+        <div class="form-group">
+            <label>الصف:</label>
+            <input type="text" id="student-grade" class="form-control" value="السادس" placeholder="مثال: السادس">
+        </div>
+        <div class="form-group">
+            <label>الشعبة / الفصل:</label>
+            <input type="text" id="student-class" class="form-control" placeholder="مثال: أ أو ب">
+        </div>
+        <div class="form-group">
+            <label>اختر لون سفينتك الفضائية:</label>
+            <div class="color-selector">
+                <div class="color-btn selected" style="background: #38bdf8;" onclick="selectColor('#38bdf8', this)"></div>
+                <div class="color-btn" style="background: #f1c40f;" onclick="selectColor('#f1c40f', this)"></div>
+                <div class="color-btn" style="background: #ef4444;" onclick="selectColor('#ef4444', this)"></div>
+                <div class="color-btn" style="background: #2ecc71;" onclick="selectColor('#2ecc71', this)"></div>
+            </div>
+        </div>
+        <button class="btn" onclick="proceedToStageSelect()">اختيار دروس الوحدة الأولى 🚀</button>
+        <button class="btn btn-secondary" onclick="showScreen('role-screen')">رجوع</button>
+    </div>
+
+    <!-- 3. اختيار دروس الوحدة الأولى -->
+    <div id="stage-select-screen" class="screen">
+        <h2>دروس الوحدة الأولى 🔬</h2>
+        <p>حدد الدرس الذي تريد الإجابة عنه:</p>
+        <div class="stages-grid">
+            <div class="stage-card" onclick="startSelectedStage(1)">
+                <h3>الدرس 1</h3>
+                <p>المجهر الضوئي المركب والأجزاء</p>
+            </div>
+            <div class="stage-card" onclick="startSelectedStage(2)">
+                <h3>الدرس 2</h3>
+                <p>البكتيريا والفيروسات</p>
+            </div>
+            <div class="stage-card" onclick="startSelectedStage(3)">
+                <h3>الدرس 3</h3>
+                <p>الطلائعيات (الأوليات والطحالب)</p>
+            </div>
+            <div class="stage-card" onclick="startSelectedStage(4)">
+                <h3>الدرس 4</h3>
+                <p>الفطريات وأهميتها</p>
+            </div>
+            <div class="stage-card" onclick="startSelectedStage(5)">
+                <h3>الدرس 5</h3>
+                <p>جهاز المناعة والمحيط الحيوي</p>
+            </div>
+        </div>
+        <button class="btn btn-secondary" onclick="showScreen('student-login-screen')">رجوع لبيانات الطالب</button>
+    </div>
+
+    <!-- 4. دخول المعلم -->
+    <div id="teacher-login-screen" class="screen">
+        <h2>دخول المعلم 🔐</h2>
+        <div class="form-group">
+            <label>البريد الإلكتروني:</label>
+            <input type="email" id="teacher-email" class="form-control" placeholder="أدخل البريد الإلكتروني">
+        </div>
+        <div class="form-group">
+            <label>كلمة السر:</label>
+            <input type="password" id="teacher-pass" class="form-control" placeholder="أدخل كلمة السر">
+        </div>
+        <button class="btn" onclick="loginTeacher()">دخول لوحة التحكم 📊</button>
+        <button class="btn btn-info" onclick="resetTeacherPassword()">استعادة كلمة السر 📧</button>
+        <button class="btn btn-secondary" onclick="showScreen('role-screen')">رجوع</button>
+    </div>
+
+    <!-- 5. لوحة المعلم -->
+    <div id="teacher-dashboard-screen" class="screen">
+        <h2>لوحة المعلم - نتائج الصف السادس 📈</h2>
+        <div style="margin-bottom: 15px;">
+            <button class="btn" onclick="exportToExcel()">تصدير إكسل 📥</button>
+            <button class="btn btn-info" onclick="setupTeacherAccount()">إعدادات البريد وكلمة السر ⚙️</button>
+            <button class="btn btn-danger" onclick="clearData()">مسح السجلات 🗑️</button>
+            <button class="btn btn-secondary" onclick="showScreen('role-screen')">تسجيل خروج</button>
+        </div>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>الاسم الثلاثي</th>
+                        <th>الصف</th>
+                        <th>الشعبة</th>
+                        <th>الدرس 1</th>
+                        <th>الدرس 2</th>
+                        <th>الدرس 3</th>
+                        <th>الدرس 4</th>
+                        <th>الدرس 5</th>
+                        <th>المجموع</th>
+                        <th>الشهادة</th>
+                        <th>التاريخ والوقت</th>
+                    </tr>
+                </thead>
+                <tbody id="results-table-body"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 6. نهاية الدرس/الاستراحة -->
+    <div id="stage-break-screen" class="screen">
+        <h2>🎉 ممتاز! أنهيت أسئلة هذا الدرس 🎉</h2>
+        <p>تم حفظ درجتك بنجاح في لوحة المعلم.</p>
+        <div style="font-size: 1.2rem; margin: 20px 0;">
+            <p>النقاط المحققة: <span id="break-stage-score" style="color:var(--accent); font-weight:bold;">0</span></p>
+        </div>
+        <button class="btn btn-success" id="cert-btn-break" onclick="openCertificateModal()" style="display:none;">🎓 استعراض وطباعة شهادة التقدير</button>
+        <button class="btn" onclick="showScreen('stage-select-screen')">اختر درساً آخر 🧭</button>
+        <button class="btn btn-info" onclick="showScreen('role-screen')">العودة للرئيسية 🏠</button>
+    </div>
+
+    <!-- 7. شاشة اللعب -->
+    <div id="game-screen" class="screen">
+        <div class="hud">
+            <div>الطالب: <span id="hud-student-name" style="color:var(--accent)">-</span></div>
+            <div>السؤال: <span id="progress-text">0/0</span></div>
+            <div>النقاط: <span id="score-text">0</span></div>
+        </div>
+
+        <div class="track-container">
+            <canvas id="raceCanvas"></canvas>
+        </div>
+
+        <div class="quiz-box">
+            <div id="stage-title" class="stage-title">الوحدة الأولى</div>
+            <div id="question" class="question-text">جاري إعداد السؤال...</div>
+            <div id="options" class="options-grid"></div>
+        </div>
+    </div>
+
+</div>
+
+<!-- 8. النافذة المنبثقة لشهادة التقدير الإلكترونية -->
+<div id="certificate-modal" class="modal-overlay">
+    <div class="certificate-container">
+        <div class="cert-header">
+            <div class="right-head">
+                <div>دولة فلسطين</div>
+                <div>وزارة التربية والتعليم العالي</div>
+                <div>مديرية التربية والتعليم / طوباس</div>
+                <div>مدرسة ذكور طمون الأساسية العليا</div>
+            </div>
+            <div class="left-head">
+                <div>الصف: <span id="cert-student-grade">السادس</span></div>
+                <div>المادة: العلوم والحياة</div>
+                <div>الوحدة الأولى: الكائنات المجهرية والمناعة</div>
+            </div>
+        </div>
+
+        <div class="cert-title">شهادة تقدير وتفوق 🎓</div>
+        <div class="cert-subtitle">وسام التميز والإبداع في مادة العلوم والحياة</div>
+
+        <div class="cert-body">
+            تتقدم إدارة مدرسة ذكور طمون الأساسية العليا ومعلم المادة بأجمل عبارات التهاني والتبريكات للطالب المبدع:
+            <br>
+            <span class="cert-student-name" id="cert-student-fullname">اسم الطالب الثلاثي</span>
+            <br>
+            من الصف (<span id="cert-student-class-display">السادس أ</span>)، وذلك لتفوقه الباهر وإنجازه المتميز في مسابقة العلوم الإلكترونية ومحققه لمجموع نقاط (<span id="cert-student-score" style="color:#d97706; font-weight:bold;">0</span>) نقطة.
+        </div>
+
+        <div class="cert-footer">
+            <div class="cert-sig">
+                <div>معلم المادة:</div>
+                <div style="color:#0284c7; margin-top:5px;">أ. أمين عبدالرازق</div>
+            </div>
+            <div class="cert-sig" style="font-size: 13px; color: #64748b;">
+                <div>تاريخ الإنجاز:</div>
+                <div id="cert-date-display" style="margin-top:5px;">2026/09/26</div>
+            </div>
+            <div class="cert-sig">
+                <div>مدير المدرسة:</div>
+                <div style="color:#0284c7; margin-top:5px;">أ. مصطفى بشارات</div>
+            </div>
+        </div>
+
+        <div class="cert-actions">
+            <button class="btn btn-success" onclick="window.print()">🖨️ طباعة الشهادة / حفظ PDF</button>
+            <button class="btn btn-secondary" onclick="closeCertificateModal()">إغلاق النافذة ✖️</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let teacherCreds = JSON.parse(localStorage.getItem('teacherCreds')) || {
+        email: "ameenmatar@gmail.com",
+        password: "admin"
+    };
+
+    let currentStudent = { name: '', grade: 'السادس', classGroup: '', color: '#38bdf8' };
+    let currentStageNum = 1;
+    let stageQuestions = [];
+    let currentStageIndex = 0;
+    let stageScore = 0;
+    
+    let shipY = 90;
+    let shipX = 50;
+    let stars = [];
+
+    const canvas = document.getElementById('raceCanvas');
+    const ctx = canvas.getContext('2d');
+
+    function initStars() {
+        stars = [];
+        for(let i = 0; i < 50; i++) {
+            stars.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                size: Math.random() * 2,
+                speed: Math.random() * 3 + 1
+            });
+        }
+    }
+
+    function resizeCanvas() {
+        if(canvas && canvas.parentElement) {
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = canvas.parentElement.clientHeight;
+            initStars();
+        }
+    }
+    window.addEventListener('resize', resizeCanvas);
+
+    function showScreen(screenId) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        const targetScreen = document.getElementById(screenId);
+        if(targetScreen) { targetScreen.classList.add('active'); }
+    }
+
+    function goToStudentLogin() { showScreen('student-login-screen'); }
+    function goToTeacherLogin() { showScreen('teacher-login-screen'); }
+
+    function selectColor(color, el) {
+        currentStudent.color = color;
+        document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('selected'));
+        el.classList.add('selected');
+    }
+
+    function loginTeacher() {
+        const email = document.getElementById('teacher-email').value.trim();
+        const pass = document.getElementById('teacher-pass').value.trim();
+
+        if (email === teacherCreds.email && pass === teacherCreds.password) {
+            renderTeacherTable();
+            showScreen('teacher-dashboard-screen');
+        } else {
+            alert("بيانات الدخول غير صحيحة!");
+        }
+    }
+
+    function resetTeacherPassword() {
+        const email = prompt("أدخل بريدك الإلكتروني المسجل:");
+        if (email && email.trim() === teacherCreds.email) {
+            alert(`كلمة السر الخاصة بك هي: ${teacherCreds.password}`);
+        } else {
+            alert("البريد الإلكتروني غير مطابق!");
+        }
+    }
+
+    function setupTeacherAccount() {
+        const newEmail = prompt("أدخل بريدك الجديد:", teacherCreds.email);
+        const newPass = prompt("أدخل كلمة السر الجديدة:", teacherCreds.password);
+
+        if (newEmail && newPass) {
+            teacherCreds.email = newEmail.trim();
+            teacherCreds.password = newPass.trim();
+            localStorage.setItem('teacherCreds', JSON.stringify(teacherCreds));
+            alert("تم التحديث بنجاح!");
+        }
+    }
+
+    function proceedToStageSelect() {
+        const name = document.getElementById('student-name').value.trim();
+        const grade = document.getElementById('student-grade').value.trim();
+        const classGroup = document.getElementById('student-class').value.trim();
+
+        if (!name || !classGroup || !grade) {
+            alert("يرجى إكمال جميع بيانات الطالب أولاً!");
+            return;
+        }
+
+        currentStudent.name = name;
+        currentStudent.grade = grade;
+        currentStudent.classGroup = classGroup;
+        showScreen('stage-select-screen');
+    }
+
+    function shuffleQuestions(questions) {
+        return questions.map(q => {
+            let optionsWithIndex = q.options.map((opt, idx) => ({
+                text: opt,
+                isCorrect: idx === q.answer
+            }));
+            
+            for (let i = optionsWithIndex.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [optionsWithIndex[i], optionsWithIndex[j]] = [optionsWithIndex[j], optionsWithIndex[i]];
+            }
+
+            const newOptions = optionsWithIndex.map(o => o.text);
+            const newAnswer = optionsWithIndex.findIndex(o => o.isCorrect);
+
+            return { ...q, options: newOptions, answer: newAnswer };
+        });
+    }
+
+    function startSelectedStage(stageNum) {
+        currentStageNum = stageNum;
+        let filtered = unitOneQuestions.filter(q => q.stageNum === stageNum);
+        
+        stageQuestions = shuffleQuestions(filtered);
+        
+        currentStageIndex = 0;
+        stageScore = 0;
+        
+        showScreen('game-screen');
+        resizeCanvas();
+        shipX = 50;
+        shipY = canvas.height / 2;
+
+        document.getElementById('hud-student-name').innerText = `${currentStudent.name} (${currentStudent.grade} - ${currentStudent.classGroup})`;
+        showQuestion();
+        requestAnimationFrame(gameLoop);
+    }
+
+    function showQuestion() {
+        if (currentStageIndex >= stageQuestions.length) {
+            saveStageResult();
+            document.getElementById('break-stage-score').innerText = stageScore;
+            
+            document.getElementById('cert-btn-break').style.display = 'inline-block';
+            showScreen('stage-break-screen');
+            return;
+        }
+
+        const q = stageQuestions[currentStageIndex];
+        document.getElementById('stage-title').innerText = q.stage;
+        document.getElementById('question').innerText = q.q;
+
+        const optionsContainer = document.getElementById('options');
+        optionsContainer.innerHTML = '';
+
+        q.options.forEach((opt, idx) => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerText = opt;
+            btn.onclick = () => checkAnswer(idx);
+            optionsContainer.appendChild(btn);
+        });
+
+        document.getElementById('progress-text').innerText = `${currentStageIndex + 1}/${stageQuestions.length}`;
+        document.getElementById('score-text').innerText = stageScore;
+    }
+
+    function checkAnswer(selectedIndex) {
+        const q = stageQuestions[currentStageIndex];
+        if (selectedIndex === q.answer) {
+            stageScore += 100;
+            const step = (canvas.width - 100) / stageQuestions.length;
+            shipX += step;
+        }
+
+        currentStageIndex++;
+        showQuestion();
+    }
+
+    function calculateTotalScore(r) {
+        let sum = 0;
+        for (let i = 1; i <= 5; i++) {
+            let val = r[`stage${i}`];
+            if (typeof val === 'number') { sum += val; }
+        }
+        return sum;
+    }
+
+    function getCurrentDateTime() {
+        const now = new Date();
+        const dateStr = now.toLocaleDateString('ar-EG');
+        const timeStr = now.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
+        return `${dateStr} - ${timeStr}`;
+    }
+
+    function saveStageResult() {
+        let results = JSON.parse(localStorage.getItem('unitOneResults') || '[]');
+        let studentIndex = results.findIndex(r => r.name === currentStudent.name && r.classGroup === currentStudent.classGroup);
+
+        let existing = studentIndex !== -1 ? results[studentIndex] : {};
+
+        let updatedRecord = {
+            name: currentStudent.name,
+            grade: currentStudent.grade || 'السادس',
+            classGroup: currentStudent.classGroup,
+            stage1: existing.stage1 !== undefined ? existing.stage1 : '-',
+            stage2: existing.stage2 !== undefined ? existing.stage2 : '-',
+            stage3: existing.stage3 !== undefined ? existing.stage3 : '-',
+            stage4: existing.stage4 !== undefined ? existing.stage4 : '-',
+            stage5: existing.stage5 !== undefined ? existing.stage5 : '-',
+            dateTime: getCurrentDateTime()
+        };
+
+        updatedRecord[`stage${currentStageNum}`] = stageScore;
+
+        if (studentIndex !== -1) {
+            results[studentIndex] = updatedRecord;
+        } else {
+            results.push(updatedRecord);
+        }
+
+        localStorage.setItem('unitOneResults', JSON.stringify(results));
+    }
+
+    /* أرقام دالة فتح نافذة الشهادة */
+    function openCertificateModal(studentData = null) {
+        let name = currentStudent.name;
+        let grade = currentStudent.grade || 'السادس';
+        let classGroup = currentStudent.classGroup;
+        let score = 0;
+        let dateTime = new Date().toLocaleDateString('ar-EG');
+
+        if (studentData) {
+            name = studentData.name;
+            grade = studentData.grade || 'السادس';
+            classGroup = studentData.classGroup;
+            score = calculateTotalScore(studentData);
+            dateTime = studentData.dateTime || studentData.date || dateTime;
+        } else {
+            let results = JSON.parse(localStorage.getItem('unitOneResults') || '[]');
+            let rec = results.find(r => r.name === name && r.classGroup === classGroup);
+            if (rec) {
+                score = calculateTotalScore(rec);
+                dateTime = rec.dateTime || rec.date || dateTime;
+            } else {
+                score = stageScore;
+            }
+        }
+
+        document.getElementById('cert-student-fullname').innerText = name || "طالب متميز";
+        document.getElementById('cert-student-grade').innerText = grade;
+        document.getElementById('cert-student-class-display').innerText = `${grade} / ${classGroup}`;
+        document.getElementById('cert-student-score').innerText = score;
+        document.getElementById('cert-date-display').innerText = dateTime;
+
+        document.getElementById('certificate-modal').classList.add('active');
+    }
+
+    function closeCertificateModal() {
+        document.getElementById('certificate-modal').classList.remove('active');
+    }
+
+    function renderTeacherTable() {
+        const tbody = document.getElementById('results-table-body');
+        tbody.innerHTML = '';
+        let results = JSON.parse(localStorage.getItem('unitOneResults') || '[]');
+
+        if (results.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="12">لا توجد نتائج مسجلة لدروس الوحدة الأولى حتى الآن</td></tr>';
+            return;
+        }
+
+        results.forEach((r, idx) => {
+            const total = calculateTotalScore(r);
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${idx + 1}</td>
+                <td><strong>${r.name}</strong></td>
+                <td>${r.grade || 'السادس'}</td>
+                <td>${r.classGroup}</td>
+                <td>${r.stage1 !== undefined ? r.stage1 : '-'}</td>
+                <td>${r.stage2 !== undefined ? r.stage2 : '-'}</td>
+                <td>${r.stage3 !== undefined ? r.stage3 : '-'}</td>
+                <td>${r.stage4 !== undefined ? r.stage4 : '-'}</td>
+                <td>${r.stage5 !== undefined ? r.stage5 : '-'}</td>
+                <td style="color:var(--accent); font-weight:bold;">${total}</td>
+                <td>
+                    <button class="btn btn-success" style="padding: 4px 10px; font-size: 0.8rem;" onclick='openCertForRecord(${JSON.stringify(r)})'>🎓 الشهادة</button>
+                </td>
+                <td>${r.dateTime || r.date || '-'}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function openCertForRecord(record) {
+        openCertificateModal(record);
+    }
+
+    function exportToExcel() {
+        let results = JSON.parse(localStorage.getItem('unitOneResults') || '[]');
+        if (results.length === 0) {
+            alert("لا توجد بيانات للتصدير!");
+            return;
+        }
+
+        let tableRows = '';
+        results.forEach((r, index) => {
+            const total = calculateTotalScore(r);
+            tableRows += `
+                <tr>
+                    <td style="text-align: center;">${index + 1}</td>
+                    <td style="text-align: right;">${r.name}</td>
+                    <td style="text-align: center;">${r.grade || 'السادس'}</td>
+                    <td style="text-align: center;">${r.classGroup}</td>
+                    <td style="text-align: center;">${r.stage1 !== undefined ? r.stage1 : '-'}</td>
+                    <td style="text-align: center;">${r.stage2 !== undefined ? r.stage2 : '-'}</td>
+                    <td style="text-align: center;">${r.stage3 !== undefined ? r.stage3 : '-'}</td>
+                    <td style="text-align: center;">${r.stage4 !== undefined ? r.stage4 : '-'}</td>
+                    <td style="text-align: center;">${r.stage5 !== undefined ? r.stage5 : '-'}</td>
+                    <td style="text-align: center; font-weight: bold; background-color: #f1c40f; color: #000;">${total}</td>
+                    <td style="text-align: center;">${r.dateTime || r.date || '-'}</td>
+                </tr>
+            `;
+        });
+
+        const excelTemplate = `
+            <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+            <head>
+                <meta http-equiv="content-type" content="text/plain; charset=UTF-8"/>
+                <!--[if gte mso 9]>
+                <xml>
+                    <x:ExcelWorkbook>
+                        <x:ExcelWorksheets>
+                            <x:ExcelWorksheet>
+                                <x:Name>نتائج الطلاب</x:Name>
+                                <x:WorksheetOptions>
+                                    <x:DisplayRightToLeft/>
+                                </x:WorksheetOptions>
+                            </x:ExcelWorksheet>
+                        </x:ExcelWorksheets>
+                    </x:ExcelWorkbook>
+                </xml>
+                <![endif]-->
+            </head>
+            <body dir="rtl">
+                <table border="1">
+                    <thead>
+                        <tr style="background-color: #9b59b6; color: #ffffff; font-weight: bold;">
+                            <th>#</th>
+                            <th>الاسم الثلاثي</th>
+                            <th>الصف</th>
+                            <th>الشعبة</th>
+                            <th>الدرس 1</th>
+                            <th>الدرس 2</th>
+                            <th>الدرس 3</th>
+                            <th>الدرس 4</th>
+                            <th>الدرس 5</th>
+                            <th>المجموع</th>
+                            <th>التاريخ والوقت</th>
+                        </tr>
+                    </thead>
+                    <tbody>${tableRows}</tbody>
+                </table>
+            </body>
+            </html>
+        `;
+
+        const blob = new Blob([excelTemplate], { type: 'application/vnd.ms-excel;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `نتائج_الصف_السادس_${new Date().toLocaleDateString('ar-EG')}.xls`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    }
+
+    function clearData() {
+        if (confirm("هل أنت متأكد من مسح جميع سجلات الصف السادس؟")) {
+            localStorage.removeItem('unitOneResults');
+            renderTeacherTable();
+        }
+    }
+
+    function drawSpaceTrack() {
+        ctx.fillStyle = '#020617';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = '#ffffff';
+        stars.forEach(s => {
+            s.x -= s.speed;
+            if(s.x < 0) s.x = canvas.width;
+            ctx.beginPath();
+            ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+            ctx.fill();
+        });
+
+        const portalX = canvas.width - 40;
+        ctx.strokeStyle = '#a855f7';
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.ellipse(portalX, canvas.height/2, 15, canvas.height/2 - 10, 0, 0, Math.PI * 2);
+        ctx.stroke();
+
+        ctx.save();
+        ctx.translate(shipX, canvas.height / 2);
+        
+        ctx.fillStyle = '#f97316';
+        ctx.beginPath();
+        ctx.moveTo(-15, 0);
+        ctx.lineTo(-25, -6);
+        ctx.lineTo(-25, 6);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.fillStyle = currentStudent.color;
+        ctx.beginPath();
+        ctx.moveTo(20, 0);
+        ctx.lineTo(-15, -12);
+        ctx.lineTo(-10, 0);
+        ctx.lineTo(-15, 12);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(3, 0, 4, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.restore();
+    }
+
+    function gameLoop() {
+        drawSpaceTrack();
+        if (document.getElementById('game-screen').classList.contains('active')) {
+            requestAnimationFrame(gameLoop);
+        }
+    }
+
+    // بنك أسئلة الوحدة الأولى - الصف السادس الأساسي
+    const unitOneQuestions = [
+        // الدرس 1: المجهر الضوئي المركب
+        { stageNum: 1, stage: "الدرس 1: المجهر الضوئي المركب", q: "1. الجزء الذي نضع عليه الشريحة الزجاجية لفحص العينة يُسمى:", options: ["المنضدة", "الذراع", "العدسة العينية", "القاعدة"], answer: 0 },
+        { stageNum: 1, stage: "الدرس 1: المجهر الضوئي المركب", q: "2. العدسة التي نضع عيننا عليها لمشاهدة العينة تُسمى:", options: ["العدسة العينية", "العدسة الشيئية", "المرآة", "المنضدة"], answer: 0 },
+        { stageNum: 1, stage: "الدرس 1: المجهر الضوئي المركب", q: "3. العدسات القريبة من الشيء المراد فادحه تُسمى:", options: ["العدسات الشيئية", "العدسات العينية", "المنضدة", "المكثف"], answer: 0 },
+        { stageNum: 1, stage: "الدرس 1: المجهر الضوئي المركب", q: "4. لحمل المجهر بطريقة صحيحة نَمسكه من:", options: ["الذراع والقاعدة", "العدسة العينية", "المنضدة فقط", "الأنبوب فقط"], answer: 0 },
+        { stageNum: 1, stage: "الدرس 1: المجهر الضوئي المركب", q: "5. نستخدم الضابط الكبير والصغير في المجهر بهدف:", options: ["توضيح صورة العينة", "تغيير لون العينة", "زيادة الضوء", "تثبيت الشريحة"], answer: 0 },
+        { stageNum: 1, stage: "الدرس 1: المجهر الضوئي المركب", q: "6. لتثبيت الشريحة الزجاجية على المنضدة نستخدم:", options: ["الماسك (الضاغطان)", "العدسة العينية", "الذراع", "القرص الدوار"], answer: 0 },
+        { stageNum: 1, stage: "الدرس 1: المجهر الضوئي المركب", q: "7. توجد العدسات الشيئية مثبتة على:", options: ["القرص الدوار", "القاعدة", "الأنبوب", "المنضدة"], answer: 0 },
+        { stageNum: 1, stage: "الدرس 1: المجهر الضوئي المركب", q: "8. إذا كانت قوة العدسة العينية 10 وقوة العدسة الشيئية 10، فإن قوة التكبير الكلية هي:", options: ["100 مرة", "20 مرة", "10 مرات", "200 مرة"], answer: 0 },
+        { stageNum: 1, stage: "الدرس 1: المجهر الضوئي المركب", q: "9. الجزء الذي يرتكز عليه المجهر على الطاولة هو:", options: ["القاعدة", "الذراع", "المنضدة", "المكثف"], answer: 0 },
+        { stageNum: 1, stage: "الدرس 1: المجهر الضوئي المركب", q: "10. الكائنات التي لا يمكن رؤيتها بالعين المجردة ونحتاج لمجهر لرؤيتها تسمى:", options: ["كائنات مجهرية (دقيقة)", "كائنات كبيرة", "حيوانات مفترسة", "نباتات معمرة"], answer: 0 },
+        { stageNum: 1, stage: "الدرس 1: المجهر الضوئي المركب", q: "11. القطعة الزجاجية التي نضع عليها العينة تسمى:", options: ["الشريحة الزجاجية", "العدسة", "المنضدة", "المرآة"], answer: 0 },
+        { stageNum: 1, stage: "الدرس 1: المجهر الضوئي المركب", q: "12. الصورة التي نراها من خلال المجهر الضوئي تكون:", options: ["مكبرة", "مصغرة جداً", "بنفس الحجم الحقيقي", "مظلمة"], answer: 0 },
+
+        // الدرس 2: البكتيريا والفيروسات
+        { stageNum: 2, stage: "الدرس 2: البكتيريا والفيروسات", q: "1. البكتيريا هي كائنات حية دقيقة تتكون من:", options: ["خلية واحدة فقط", "خلايا كثيرة جداً", "ثلاث خلايا", "لا تحتوي على خلايا"], answer: 0 },
+        { stageNum: 2, stage: "الدرس 2: البكتيريا والفيروسات", q: "2. من الأشكال المشهورة للبكتيريا الشكل:", options: ["العصوي والكروي والحلزوني", "المربع", "المثلث", "النجمي"], answer: 0 },
+        { stageNum: 2, stage: "الدرس 2: البكتيريا والفيروسات", q: "3. تُستفاد البكتيريا النافعة في صناعة:", options: ["اللبن والجبن", "الحديد والصلب", "الزجاج", "البلاستيك"], answer: 0 },
+        { stageNum: 2, stage: "الدرس 2: البكتيريا والفيروسات", q: "4. الكائنات الدقيقة التي تُعتبر أصغر حجماً من البكتيريا هي:", options: ["الفيروسات", "الفطريات", "الطحالب", "الديدان"], answer: 0 },
+        { stageNum: 2, stage: "الدرس 2: البكتيريا والفيروسات", q: "5. سبب مرض الزكام والإنفلونزا هو إصابة بـ:", options: ["فيروس", "بكتيريا نافعة", "فطر الخميرة", "طحلب"], answer: 0 },
+        { stageNum: 2, stage: "الدرس 2: البكتيريا والفيروسات", q: "6. الفيروسات لا تتكاثر ولا تنشط إلا عندما تكون:", options: ["داخل جسم كائن حي", "في الهواء فقط", "على الطاولة", "في الماء المغلي"], answer: 0 },
+        { stageNum: 2, stage: "الدرس 2: البكتيريا والفيروسات", q: "7. تسوس الأسنان يتسبب به بشكل رئيسي نوع من:", options: ["البكتيريا الضارة", "الفيروسات", "الطحالب", "الفطريات النافعة"], answer: 0 },
+        { stageNum: 2, stage: "الدرس 2: البكتيريا والفيروسات", q: "8. تتكاثر البكتيريا بسرعة عن طريق:", options: ["الانقسام إلى خليتين", "تكوين الأزهار", "إنتاج البذور", "التبرعم فقط"], answer: 0 },
+        { stageNum: 2, stage: "الدرس 2: البكتيريا والفيروسات", q: "9. لرؤية الفيروسات بشكل واضح نحتاج إلى استخدام:", options: ["المجهر الإلكتروني", "العين المجردة", "العدسة اليدوية البسيطة", "النظارة الشديدة"], answer: 0 },
+        { stageNum: 2, stage: "الدرس 2: البكتيريا والفيروسات", q: "10. البكتيريا التي تعيش على جذور النباتات البقولية تسهم في:", options: ["تغذية التربة وتخصيبها", "قتل النباتات", "تجفيف التربة", "منع نمو الأوراق"], answer: 0 },
+        { stageNum: 2, stage: "الدرس 2: البكتيريا والفيروسات", q: "11. المضادات الحيوية تستخدم للقضاء على:", options: ["البكتيريا", "الفيروسات", "الغبار", "الحشرات"], answer: 0 },
+        { stageNum: 2, stage: "الدرس 2: البكتيريا والفيروسات", q: "12. جميع الفيروسات تُعتبر كائنات:", options: ["ضارة وتسبب الأمراض", "نافعة وتؤكل", "تُصنع منها الأغذية", "تساعد على الهضم"], answer: 0 },
+
+        // الدرس 3: الطلائعيات (الأوليات والطحالب)
+        { stageNum: 3, stage: "الدرس 3: الطلائعيات", q: "1. تتحرك الأميبا باستخدام العضويات البسيطة التي تسمى:", options: ["الأقدام الكاذبة", "الأهداب", "الأجنحة", "الذيل"], answer: 0 },
+        { stageNum: 3, stage: "الدرس 3: الطلائعيات", q: "2. يتحرك البراميسيوم بواسطة زوائد دقيقة تشبه الشعر تسمى:", options: ["الأهداب", "الأقدام الكاذبة", "الأسواط", "الأرجُل"], answer: 0 },
+        { stageNum: 3, stage: "الدرس 3: الطلائعيات", q: "3. الكائن الذي يتحرك بوساطة السوط هو:", options: ["اليوجلينا", "الأميبا", "البراميسيوم", "فطر العفن"], answer: 0 },
+        { stageNum: 3, stage: "الدرس 3: الطلائعيات", q: "4. لون الطحالب الخضراء يعود لوجود صبغة تصنع غذائها بها تسمى:", options: ["الكلوروفيل", "الحديد", "الزيت", "السكر"], answer: 0 },
+        { stageNum: 3, stage: "الدرس 3: الطلائعيات", q: "5. تصنع الطحالب غذاءها بنفسها بعملية تسمى:", options: ["البناء الضوئي", "التنفس", "الهضم", "الانقسام"], answer: 0 },
+        { stageNum: 3, stage: "الدرس 3: الطلائعيات", q: "6. تعيش معظم الطحالب والأوليات في البيئة:", options: ["المائية والمطببة", "الصحراوية الجافة جداً", "على النار", "داخل المعادن"], answer: 0 },
+        { stageNum: 3, stage: "الدرس 3: الطلائعيات", q: "7. تنتج الطحالب للبيئة المائية كميات كبيرة من غاز:", options: ["الأكسجين", "النيتروجين", "الغاز الطبيعي", "الكلور"], answer: 0 },
+        { stageNum: 3, stage: "الدرس 3: الطلائعيات", q: "8. مرض الملاريا ينقله بعوض خاص ويتسبب به كائن من المجهريات يسمى:", options: ["البلازموديوم", "الخميرة", "بكتيريا اللبن", "عفن الخبز"], answer: 0 },
+        { stageNum: 3, stage: "الدرس 3: الطلائعيات", q: "9. من الأمثلة على الطحالب الخضراء التي تشبه الخيوط في الماء:", options: ["السبيروجيرا", "الأميبا", "البراميسيوم", "المشروم"], answer: 0 },
+        { stageNum: 3, stage: "الدرس 3: الطلائعيات", q: "10. تُستخرج من بعض أنواع الطحالب مواد تُستخدم في صنع:", options: ["معجون الأسنان والآيس كريم", "الحديد", "السيارات", "الورق المقوى"], answer: 0 },
+        { stageNum: 3, stage: "الدرس 3: الطلائعيات", q: "11. الشرب من مياه المزارع الملوثة قد يسبب مرض ألم البطن المسمى:", options: ["الزحار الأميبي", "السكري", "الرشح", "تسوس الأسنان"], answer: 0 },
+        { stageNum: 3, stage: "الدرس 3: الطلائعيات", q: "12. تختلف الأميبا عن البراميسيوم في:", options: ["طريقة الحركة", "أن كلاهما يرى بالعين", "أن البراميسيوم يصنع غذاءه", "أن الأميبا نبات"], answer: 0 },
+
+        // الدرس 4: الفطريات
+        { stageNum: 4, stage: "الدرس 4: الفطريات", q: "1. الفطر الذي نستخدمه في صناعة المعجنات والخبز هو:", options: ["فطر الخميرة", "عفن الخبز", "فطر صدأ القمح", "فطر القوباء"], answer: 0 },
+        { stageNum: 4, stage: "الدرس 4: الفطريات", q: "2. فطر تؤكل ويتميز بطعمه اللذيذ ويسمى عيش الغراب هو:", options: ["المشروم", "عفن البرتقال", "الخميرة", "البكتيريا الكروية"], answer: 0 },
+        { stageNum: 4, stage: "الدرس 4: الفطريات", q: "3. الطبقة الخضراء أو البيضاء التي تظهر على الخبز القديم هي:", options: ["عفن الخبز", "طحلب مائي", "خميرة ناضجة", "بكتيريا نافعة"], answer: 0 },
+        { stageNum: 4, stage: "الدرس 4: الفطريات", q: "4. الفطريات كائنات لا تصنع غذاءها بنفسها لأنها لا تحتوي على:", options: ["صبغة الكلوروفيل الخضراء", "الماء", "الجذور", "الأوراق"], answer: 0 },
+        { stageNum: 4, stage: "الدرس 4: الفطريات", q: "5. دواء البنسلين الشهير لاستئصال التهابات الجسم يُستخرج من:", options: ["نوع من الفطريات", "فيروس الانفلونزا", "طحلب بحري", "بكتيريا ضارة"], answer: 0 },
+        { stageNum: 4, stage: "الدرس 4: الفطريات", q: "6. يتكاثر فطر الخميرة عن طريق ظهور بروز صغير يسمى:", options: ["التبرعم", "البذور", "الأزهار", "الانقسام بالطول"], answer: 0 },
+        { stageNum: 4, stage: "الدرس 4: الفطريات", q: "7. تساعد الفطريات في البيئة على:", options: ["تحليل بقايا النباتات والحيوانات الميتة", "تلوث الهواء", "زيادة القمامة", "قتل الأسماك"], answer: 0 },
+        { stageNum: 4, stage: "الدرس 4: الفطريات", q: "8. فطر ثمين جداً ينمو تحت الأرض بالقرب من جذور الأشجار هو:", options: ["الكماة (الفقع)", "عفن الخبز", "فطر الخميرة", "السبيروجيرا"], answer: 0 },
+        { stageNum: 4, stage: "الدرس 4: الفطريات", q: "9. تسبب بعض الفطريات أمراضاً جلدية للإنسان مثل مرض:", options: ["القوباء (حكة الجلد)", "الزكام", "الملاريا", "الأنيميا"], answer: 0 },
+        { stageNum: 4, stage: "الدرس 4: الفطريات", q: "10. يحذر العلماء من قطف الفطريات البرية الملونة من الغابات لأن بعضها:", options: ["سام جداً", "حار جداً", "ملح جداً", "حامض جداً"], answer: 0 },
+        { stageNum: 4, stage: "الدرس 4: الفطريات", q: "11. ينتشر عفن الخبز عن طريق إطلاق جسيمات صغيرة جداً تطير بالهواء تسمى:", options: ["الأبواغ (الجراثيم)", "البذور", "البيض", "القطرات"], answer: 0 },
+        { stageNum: 4, stage: "الدرس 4: الفطريات", q: "12. تحتاج الفطريات للنمو بشكل أساسي إلى بيئة فيها:", options: ["رطوبة ودفء", "جفاف شديد وثلج", "ضوء شمس قوي جداً", "زيت ووقود"], answer: 0 },
+
+        // الدرس 5: جهاز المناعة
+        { stageNum: 5, stage: "الدرس 5: جهاز المناعة", q: "1. خط الدفاع الأول الذي يغطي جسمنا ويمنع دخول الجراثيم هو:", options: ["الجلد السليم", "العظام", "الشعر", "المعدة"], answer: 0 },
+        { stageNum: 5, stage: "الدرس 5: جهاز المناعة", q: "2. الخلايا الموجودة بالدم والتي تدافع عن الجسم وتحارب الميكروبات هي:", options: ["خلايا الدم البيضاء", "خلايا الدم الحمراء", "الصفائح الدموية", "خلايا العضلات"], answer: 0 },
+        { stageNum: 5, stage: "الدرس 5: جهاز المناعة", q: "3. إعطاء الأطفال طُعماً في المدرسة لحمايتهم من الأمراض يسمى:", options: ["التطعيم (اللقاح)", "المضاد الحيوي", "التنفس", "الفحص الضوئي"], answer: 0 },
+        { stageNum: 5, stage: "الدرس 5: جهاز المناعة", q: "4. السائل الذي تفرزه العين عند دخول الأتربة لتنظيفها هو:", options: ["الدموع", "العرق", "اللعاب", "الدم"], answer: 0 },
+        { stageNum: 5, stage: "الدرس 5: جهاز المناعة", q: "5. المادة المخاطية الموجودة بالأنف تعمل على:", options: ["حجز الغبار والجراثيم", "تبريد الرأس", "تسهيل الشم", "تقوية العظام"], answer: 0 },
+        { stageNum: 5, stage: "الدرس 5: جهاز المناعة", q: "6. من الممارسات اليومية المهمة جداً لمنع انتقال العدوى والجراثيم:", options: ["غسل اليدين بالماء والصابون", "تناول الحلوى", "السهر المتأخر", "عدم شرب الماء"], answer: 0 },
+        { stageNum: 5, stage: "الدرس 5: جهاز المناعة", q: "7. لتقوية مناعة جسمنا يجب أن نأكل أطعمة غنية بالفيتامينات مثل:", options: ["الفواكه والخضروات", "الشيبس والمشروبات الغازية", "السكريات بكثرة", "المقالي فقط"], answer: 0 },
+        { stageNum: 5, stage: "الدرس 5: جهاز المناعة", q: "8. قدرة الجسم الطبيعية على مقاومة الأمراض والجراثيم تسمى:", options: ["المناعة", "الهضم", "الدوران", "التنفس"], answer: 0 },
+        { stageNum: 5, stage: "الدرس 5: جهاز المناعة", q: "9. عند العطاس يُفضل استخدام منديل أو مرفق اليد بهدف:", options: ["منع انتشار الجراثيم في الهواء", "تلوين الملابس", "تنظيف الوجه", "إخفاء العطس"], answer: 0 },
+        { stageNum: 5, stage: "الدرس 5: جهاز المناعة", q: "10. تساعد ممارسة الرياضة والنوم الكافي على:", options: ["تقوية جهاز المناعة", "إضعاف الجسم", "زيادة السعال", "الإصابة بالمرض"], answer: 0 },
+        { stageNum: 5, stage: "الدرس 5: جهاز المناعة", q: "11. الحمض الموجود داخل المعدة يساعد على:", options: ["قتل الجراثيم التي تدخل مع الطعام", "هضم العظام", "تبريد المعدة", "تنظيف الأسنان"], answer: 0 },
+        { stageNum: 5, stage: "الدرس 5: جهاز المناعة", q: "12. الشعيرات الصغير الموجودة في الأنف تساعد على:", options: ["تنقية الهواء من الأتربة", "إدخال الغبار", "تغيير صوت الإنسان", "حبس الأكسجين"], answer: 0 }
+    ];
+</script>
+</body>
+</html>
